@@ -1,25 +1,30 @@
 from room import Room
 from player import Player
+from items import Item
 
 # Declare all the rooms
 
+
+
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", 
+                     [Item("flashlight", "Lightens up the room!")]),
+    
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", [Item("glasses", "improves vision by 10%")]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [Item("binoculars", "Vision becomes zoomed in by 20%")]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", [Item("hammer", "level 1 weapon"), Item("backpack" , "carry up to 5 extra items")]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", [Item("gold", "You have 10 Gold nuggets"), Item("diamonds", "You have earned 5 diamonds")]),
 }
 
 
@@ -48,8 +53,8 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 
-jordan = Player('outside')
-print(jordan.inventory)
+jordan = Player(room['outside'])
+
 
 # 0 = north(n), 1 = east(e), 2 = south(s) , 3 = west(w)
 
@@ -62,50 +67,63 @@ leave_game = 'q'
 #if an if condition is met, the elif condition will not run
 
 x = True
+
 while x:
+    #print(f"you are in {room['outside']}")
     player_move = input("~~> ")
     if player_move == leave_game:
         print('Goodbye!!!')
         break
-    if jordan.player_room is 'outside':
-      if player_move == movements[0]:
-          jordan.player_room = 'foyer'
-          print(f"{room['outside'].n_to.name}, \n {room['outside'].n_to.description}")
-      else:
-          print('Sorry, you can not go that way!')
-    elif jordan.player_room is 'foyer':
-        if player_move == str(movements[2]):
-            print(f"{room['foyer'].s_to.name}, \n {room['foyer'].s_to.description}")
-            jordan.player_room = 'outside'
-        elif player_move == str(movements[0]):
-            print(f"{room['foyer'].n_to.name}, \n {room['foyer'].n_to.description}")
-            jordan.player_room = 'overlook'
-        elif player_move == str(movements[1]):
-            print(f"{room['foyer'].e_to.name}, \n {room['foyer'].e_to.description}")
-            jordan.player_room = 'narrow'
-        elif player_move == str(movements[3]):
-            print('Sorry, you can not go that way!')
-    elif jordan.player_room is 'overlook':
-        if player_move == str(movements[2]):
-            print(f"{room['overlook'].s_to.name}, \n {room['overlook'].s_to.description}")
-            jordan.player_room = 'foyer'
+    if len(player_move.split(' ')) == 2:
+        if player_move.split(' ')[0] == 'get':
+            jordan.get_item(player_move.split(' ')[1])
+        elif player_move.split(' ')[0] == 'drop':
+            pass
+    elif jordan.player_room is room['outside']:
+        if  player_move == movements[0]:
+            jordan.player_room = room['foyer']
+            jordan.get_item(jordan.player_room.items[0])
+            print(jordan.player_room)
         else:
             print('Sorry, you can not go that way!')
-    elif jordan.player_room is 'narrow':
-        if player_move == str(movements[0]):
-            print(f"{room['narrow'].n_to.name}, \n {room['narrow'].n_to.description}")
-            jordan.player_room = 'treasure'
+    elif jordan.player_room is room['foyer']:
+        if  player_move == str(movements[2]):
+            jordan.player_room = room['outside']
+            print(jordan.player_room)
+        elif player_move == str(movements[0]):
+            jordan.player_room = room['overlook']
+            print(jordan.player_room)
+        elif player_move == str(movements[1]):
+            jordan.player_room = room['narrow']
+            print(jordan.player_room)
         elif player_move == str(movements[3]):
-            print(f"{room['narrow'].w_to.name}, \n {room['narrow'].w_to.description}")
-            jordan.player_room = 'foyer'    
+            print('Sorry, you can not go that way!')
+    elif jordan.player_room is room['overlook']:
+        if  player_move == str(movements[2]):
+            jordan.player_room = room['foyer']
+            print(jordan.player_room)
+        else:
+            print('Sorry, you can not go that way!')
+    elif jordan.player_room is room['narrow']:
+        if  player_move == str(movements[0]):
+            jordan.player_room = room['treasure']
+            print(jordan.player_room)
+        elif player_move == str(movements[3]):
+            jordan.player_room = room['foyer']
+            print(jordan.player_room)    
         else:
             print("sorry you can not go that way!")    
-    elif jordan.player_room is 'treasure':
-        if player_move == str(movements[2]):
-            print(f"{room['treasure'].s_to.name}, \n {room['treasure'].s_to.description}")
-            jordan.player_room = 'narrow'
+    elif jordan.player_room is room['treasure']:
+        if  player_move == str(movements[2]):
+            jordan.player_room = room['narrow']
+            print(jordan.player_room)
         else:
-            print('you can not go that way!')                
+            print('you can not go that way!')    
+            
+            
+            
+
+                
 
             
 
